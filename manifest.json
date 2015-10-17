@@ -10,7 +10,7 @@
     "template.html"
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["underscore-1.8.3.min.js", "background.js"]
   },
   "content_scripts": [
     {
