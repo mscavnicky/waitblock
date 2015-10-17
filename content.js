@@ -1,15 +1,12 @@
 function block() {
-  // In this stage of page lifecycle body element does
-  // not exist and we need to manually create it.
-  var body = document.createElement("body");
-  document.documentElement.appendChild(body);
+  //Stop the original page from loading.
+  window.stop();
 
+  // Replace document content with blocking template.
   $.ajax({
     url: chrome.extension.getURL('template.html'),
     success: function(html) {
-      document.body.innerHTML = html;
-      // Stop the original page from loading
-      window.stop();
+      document.all[0].innerHTML = html;
     }
   });
 
@@ -20,7 +17,7 @@ function block() {
     });
 
     window.location.reload();
-  }, 5000);
+  }, 30000);
 }
 
 
