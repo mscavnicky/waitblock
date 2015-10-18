@@ -5,19 +5,33 @@ function block() {
   // Replace document content with blocking template.
   $.ajax({
     url: chrome.extension.getURL('template.html'),
+    async: false,
     success: function(html) {
       document.all[0].innerHTML = html;
     }
   });
 
-  setTimeout(function() {
-    chrome.runtime.sendMessage({
-      subject: "unblock",
-      hostname: window.location.hostname
-    });
+  var unblockTime = 30;
+  document.getElementById('timer').innerHTML = unblockTime;
 
-    window.location.reload();
-  }, 30000);
+  var timer = setInterval(function() {
+    if (unblockTime === 0) {
+      clearInterval(timer);
+      unblock();
+    } else {
+       document.getElementById('timer').innerHTML = unblockTime;
+       unblockTime -= 1;
+    }
+  }, 1000);
+}
+
+function unblock() {
+  chrome.runtime.sendMessage({
+    subject: "unblock",
+    hostname: window.location.hostname
+  });
+
+  window.location.reload();
 }
 
 
