@@ -1,47 +1,64 @@
-// Time to wait before unblocking the page. In milliseconds.
-var unblockTime = 15000;
-// Time to wait till the page is blocked after unblocking. In milliseconds.
-var blockTime = 5 * 60 * 1000;
-
-// The list of domains to block. Covers subdomains as well.
-var blockedDomains = [
-  'facebook.com',
-  'idnes.cz',
-  'pravda.sk'
-];
+// Default options
+var options = {
+  // Time to wait before unblocking the page. In milliseconds.
+  waitTime: 30,
+  // Time to wait till the page is blocked after unblocking. In milliseconds.
+  blockTime: 5,
+  // The list of domains to block. Covers subdomains as well.
+  blocklist: 'facebook.com'
+};
 
 // Hash of times in milliseconds when particular domain was blocked.
-var domainUnblockTimes = {};
+var unblockTimes = {};
 
 // Determine whether specific hostname is currently blocked. Domain is blocked
 // if it is in the blocklist and was not recently unblocked.
 function blocked(message) {
-  var domain =  _.find(blockedDomains, function (domain) {
+  var domain =  _.find(parsedBlocklist(), function (domain) {
     return message.hostname.endsWith(domain);
   });
 
-  if (_.isUndefined(domain)) {
+  if (_.isUndefined(domain))
     return false;
-  }
 
-  var domainUnblockTime = domainUnblockTimes[domain];
-  if (_.isUndefined(domainUnblockTime)) {
+  var unblockTime = unblockTimes[domain];
+  if (_.isUndefined(unblockTime))
     return true;
-  }
-  console.log("Unblock time " + domainUnblockTime);
 
   // Site is blocked again when the it was unblocked for too long.
-  console.log("Time since unblock " + (Date.now() - domainUnblockTime));
-  return Date.now() - domainUnblockTime > blockTime;
+  return Date.now() - unblockTime > options.blockTime * 60 * 1000;
 }
 
 function unblock(message) {
-  var domain =  _.find(blockedDomains, function (domain) {
+  var domain =  _.find(parsedBlocklist(), function (domain) {
     return message.hostname.endsWith(domain);
   });
 
-  domainUnblockTimes[domain] = Date.now();
+  unblockTimes[domain] = Date.now();
 }
+
+function parsedBlocklist(blocklist) {
+  if (options.blocklist.trim().length === 0)
+    return [];
+
+  return _.map(options.blocklist.split(','), function(str) {
+    return str.trim();
+  });
+}
+
+// Load the options from storage.
+chrome.storage.sync.get(options, function(items) {
+  _.mapObject(items, function (value, key) {
+    options[key] = value;
+  });
+});
+
+// Listen to changes in options and reload when necesasary
+chrome.storage.onChanged.addListener(function(changes) {
+  _.mapObject(changes, function(change, key) {
+    options[key] = change.newValue;
+  });
+});
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   console.log("Received message " + message.subject);

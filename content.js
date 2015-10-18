@@ -11,18 +11,20 @@ function block() {
     }
   });
 
-  var unblockTime = 30;
-  document.getElementById('timer').innerHTML = unblockTime;
+  chrome.storage.sync.get('waitTime', function(items) {
+    var waitTime = items.waitTime;
+    document.getElementById('timer').innerHTML = waitTime;
 
-  var timer = setInterval(function() {
-    if (unblockTime === 0) {
-      clearInterval(timer);
-      unblock();
-    } else {
-       document.getElementById('timer').innerHTML = unblockTime;
-       unblockTime -= 1;
-    }
-  }, 1000);
+    var timer = setInterval(function() {
+      if (waitTime === 0) {
+        clearInterval(timer);
+        unblock();
+      } else {
+         document.getElementById('timer').innerHTML = waitTime;
+         waitTime -= 1;
+      }
+    }, 1000);
+  });
 }
 
 function unblock() {
