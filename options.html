@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spinblock options</title>
+    <style>
+      section {
+        margin: 10px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 5em;
+      }
+
+      #flash {
+        color: green;
+      }
+
+      .note {
+        font-size: 50%;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <section>
+      <div>
+        <div><label for="waitTime">Wait time</label></div>
+        <em class="note">
+          You will wait this much time for blocked pages to load.
+        </em>
+      </div>
+
+      <div>
+        <input type="range" id="waitTime" min="0" max="180" step="1">
+        <output for="waitTime" id="waitTimeOutput"></output> seconds
+      </div>
+    </section>
+
+    <section>
+      <div>
+        <div><label for="blockTime">Block time</label></div>
+        <em class="note">
+          Unblocked pages will get blocked again after this time.
+        </em>
+      </div>
+
+      <div>
+        <input type="range" id="blockTime" min="0" max="60" step="1">
+        <output for="blockTime" id="blockTimeOutput"></output> minutes
+      </div>
+    </section>
+
+    <section>
+      <div>
+        <div><label for"blocklist">Blocklist</label></div>
+        <em class="note">
+          Comma separated list of domains to block (e.g. facebook.com)
+        </em>
+      </div>
+
+      <div>
+        <textarea id="blocklist"></textarea>
+      </div>
+    </section>
+
+    <section>
+      <div>
+        <button id="saveOptions">Save</button>
+        <span id="flash"></span>
+      </div>
+    </section>
+
+    <script type="text/javascript" src="options.js"></script>
+  </body>
+</html>

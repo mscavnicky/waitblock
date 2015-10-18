@@ -2,9 +2,10 @@
   "manifest_version": 2,
   "name": "Spinblock",
   "version": "0.1.0",
+  "minimum_chrome_version": "40",
+
   "permissions": [
-    "activeTab",
-    "tabs"
+    "storage"
   ],
   "web_accessible_resources": [
     "template.html"
@@ -18,5 +19,9 @@
       "js": ["jquery-2.1.4.min.js", "content.js"],
       "run_at": "document_start"
     }
-  ]
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  }
 }
