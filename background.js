@@ -65,8 +65,6 @@ chrome.storage.onChanged.addListener(function(changes) {
 });
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-  console.log("Received message " + message.subject);
-
   sendResponse({
     'blocked': blocked,
     'unblock': unblock

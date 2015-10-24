@@ -2,7 +2,7 @@ function block() {
   //Stop the original page from loading.
   window.stop();
 
-  // Replace document content with blocking template.
+  // Synchronously replace document content with blocking template.
   var request = new XMLHttpRequest();
   request.open("GET", chrome.extension.getURL('template.html'), false);
   request.send();
@@ -13,12 +13,13 @@ function block() {
     document.all[0].innerHTML = html;
   }
 
+  // Start the countdown
   chrome.storage.sync.get('waitTime', function(items) {
     var waitTime = items.waitTime;
     document.getElementById('timer').innerHTML = waitTime;
 
     var timer = setInterval(function() {
-      if (waitTime === 0) {
+      if (waitTime <= 0) {
         clearInterval(timer);
         unblock();
       } else {
