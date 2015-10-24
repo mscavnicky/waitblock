@@ -6,12 +6,17 @@
 
       @media {
         html {
-          background: url(https://unsplash.it/800/480?image={{imageId}}) no-repeat center center fixed;
+          background: url(https://unsplash.it/1280/800?image={{imageId}}) no-repeat center center fixed;
+        }
+      }
+      @media screen and (min-width: 1440px) {
+        html {
+          background: url(https://unsplash.it/1920/1080?image={{imageId}}) no-repeat center center fixed;
         }
       }
       @media screen and (min-resolution: 192dpi) {
         html {
-          background: url(https://unsplash.it/1280/800?image={{imageId}}) no-repeat center center fixed;
+          background: url(https://unsplash.it/1920/1080?image={{imageId}}) no-repeat center center fixed;
         }
       }
 
