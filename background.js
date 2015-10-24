@@ -14,6 +14,10 @@ var unblockTimes = {};
 // Determine whether specific hostname is currently blocked. Domain is blocked
 // if it is in the blocklist and was not recently unblocked.
 function blocked(message) {
+  // Handle special case
+  if (options.waitTime === '0')
+    return false;
+
   var domain =  _.find(parsedBlocklist(), function (domain) {
     return message.hostname.endsWith(domain);
   });
