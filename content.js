@@ -6,7 +6,9 @@ function block() {
   $.ajax({
     url: chrome.extension.getURL('template.html'),
     async: false,
-    success: function(html) {
+    success: function(template) {
+      var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
+      var html = template.replace(/{{imageId}}/g, Math.floor(dayNumber % 900));
       document.all[0].innerHTML = html;
     }
   });
