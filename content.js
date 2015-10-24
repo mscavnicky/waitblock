@@ -3,15 +3,15 @@ function block() {
   window.stop();
 
   // Replace document content with blocking template.
-  $.ajax({
-    url: chrome.extension.getURL('template.html'),
-    async: false,
-    success: function(template) {
-      var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
-      var html = template.replace(/{{imageId}}/g, Math.floor(dayNumber % 900));
-      document.all[0].innerHTML = html;
-    }
-  });
+  var request = new XMLHttpRequest();
+  request.open("GET", chrome.extension.getURL('template.html'), false);
+  request.send();
+
+  if (request.status === 200) {
+    var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
+    var html = request.responseText.replace(/{{imageId}}/g, Math.floor(dayNumber % 900));
+    document.all[0].innerHTML = html;
+  }
 
   chrome.storage.sync.get('waitTime', function(items) {
     var waitTime = items.waitTime;
