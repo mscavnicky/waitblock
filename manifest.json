@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "WaitBlock",
   "description": "Setup wait period for time-wasting sites. Reflect on your core values while waiting.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minimum_chrome_version": "40",
 
   "permissions": [
