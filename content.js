@@ -14,7 +14,7 @@ function block() {
   }
 
   // Start the countdown
-  chrome.storage.sync.get('waitTime', function(items) {
+  chrome.storage.sync.get({'waitTime': 30}, function(items) {
     var waitTime = items.waitTime;
     document.getElementById('timer').innerHTML = waitTime;
 
