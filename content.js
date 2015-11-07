@@ -9,7 +9,8 @@ function block() {
 
   if (request.status === 200) {
     var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
-    var html = request.responseText.replace(/{{imageId}}/g, Math.floor(dayNumber % 900));
+    var randomId = (99991 * Math.floor(dayNumber)) % 900;
+    var html = request.responseText.replace(/{{imageId}}/g, randomId);
     document.all[0].innerHTML = html;
   }
 
