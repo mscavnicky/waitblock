@@ -12,12 +12,6 @@ function saveOptions() {
 }
 
 function restoreOptions() {
-  defaultOptions = {
-    waitTime: 30,
-    blockTime: 5,
-    blocklist: 'facebook.com'
-  };
-
   chrome.storage.sync.get(defaultOptions, function(items) {
     $('waitTime').value = items.waitTime;
     $('blockTime').value = items.blockTime;

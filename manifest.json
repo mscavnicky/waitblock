@@ -13,12 +13,16 @@
     "template.html"
   ],
   "background": {
-    "scripts": ["underscore-1.8.3.min.js", "background.js"]
+    "scripts": [
+      "underscore-1.8.3.min.js",
+      "waitblock.js",
+      "background.js"
+    ]
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["waitblock.js", "content.js"],
       "run_at": "document_start"
     }
   ],

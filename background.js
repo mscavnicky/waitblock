@@ -1,13 +1,5 @@
-// Default options
-var options = {
-  // Time to wait before unblocking the page. In milliseconds.
-  waitTime: 30,
-  // Time to wait till the page is blocked after unblocking. In milliseconds.
-  blockTime: 5,
-  // The list of domains to block. Covers subdomains as well.
-  blocklist: 'facebook.com'
-};
-
+// Local copy of extension options
+var options = defaultOptions;
 // Hash of times in milliseconds when particular domain was blocked.
 var unblockTimes = {};
 
