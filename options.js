@@ -1,15 +1,13 @@
 function saveOptions() {
   options = {
-    waitTime: document.getElementById('waitTime').value,
-    blockTime: document.getElementById('blockTime').value,
-    blocklist: document.getElementById('blocklist').value
+    waitTime: $('waitTime').value,
+    blockTime: $('blockTime').value,
+    blocklist: $('blocklist').value
   };
 
   chrome.storage.sync.set(options, function() {
-    document.getElementById('flash').textContent = 'Options saved.';
-    setTimeout(function() {
-      document.getElementById('flash').textContent = '';
-    }, 2500);
+    $('flash').textContent = 'Options saved.';
+    setTimeout(function() { $('flash').textContent = ''; }, 2500);
   });
 }
 
@@ -21,25 +19,29 @@ function restoreOptions() {
   };
 
   chrome.storage.sync.get(defaultOptions, function(items) {
-    document.getElementById('waitTime').value = items.waitTime;
-    document.getElementById('blockTime').value = items.blockTime;
-    document.getElementById('blocklist').value = items.blocklist;
+    $('waitTime').value = items.waitTime;
+    $('blockTime').value = items.blockTime;
+    $('blocklist').value = items.blocklist;
 
-    document.getElementById('waitTimeOutput').value = items.waitTime;
-    document.getElementById('blockTimeOutput').value = items.blockTime;
+    // Setting value does not trigger click oninput event.
+    $('waitTimeOutput').value = items.waitTime;
+    $('blockTimeOutput').value = items.blockTime;
   });
 }
 
-document.getElementById('waitTime').addEventListener('input', function() {
-  var value = document.getElementById('waitTime').value;
-  document.getElementById('waitTimeOutput').value = value;
+// Convenience function slightly (different from the jQuery one).
+function $(id) {
+  return document.getElementById(id);
+}
+
+$('waitTime').addEventListener('input', function() {
+  $('waitTimeOutput').value = $('waitTime').value;
 });
 
-document.getElementById('blockTime').addEventListener('input', function() {
-  var value = document.getElementById('blockTime').value;
-  document.getElementById('blockTimeOutput').value = value;
+$('blockTime').addEventListener('input', function() {
+  $('blockTimeOutput').value = $('blockTime').value;
 });
 
-document.getElementById('saveOptions').addEventListener('click', saveOptions);
+$('saveOptions').addEventListener('click', saveOptions);
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
