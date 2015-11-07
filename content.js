@@ -1,5 +1,5 @@
 function block() {
-  //Stop the original page from loading.
+  // Stop the original page from loading.
   window.stop();
 
   // Synchronously replace document content with blocking template.
@@ -23,8 +23,8 @@ function block() {
         clearInterval(timer);
         unblock();
       } else {
-         document.getElementById('timer').innerHTML = waitTime;
-         waitTime -= 1;
+        document.getElementById('timer').innerHTML = waitTime;
+        waitTime -= 1;
       }
     }, 1000);
   });
@@ -46,7 +46,6 @@ var message = {
 };
 
 chrome.runtime.sendMessage(message, function(response) {
-  if (response === true) {
+  if (response === true)
     block();
-  }
 });
