@@ -8,21 +8,24 @@
   "permissions": [
     "storage"
   ],
-  "icons": { "128": "icon.png" },
+  "icons": { "128": "img/icon.png" },
   "web_accessible_resources": [
-    "template.html"
+    "index.html"
   ],
   "background": {
     "scripts": [
-      "underscore-1.8.3.min.js",
-      "waitblock.js",
-      "background.js"
+      "js/underscore-1.8.3.min.js",
+      "js/waitblock.js",
+      "js/background.js"
     ]
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["waitblock.js", "content.js"],
+      "js": [
+        "js/waitblock.js",
+        "js/content.js"
+      ],
       "run_at": "document_start"
     }
   ],

@@ -4,7 +4,7 @@ function block() {
 
   // Synchronously replace document content with blocking template.
   var request = new XMLHttpRequest();
-  request.open("GET", chrome.extension.getURL('template.html'), false);
+  request.open("GET", chrome.extension.getURL("index.html"), false);
   request.send();
 
   if (request.status === 200) {
