@@ -2,6 +2,19 @@
 var options = defaultOptions;
 // Hash of times in milliseconds when particular domain was blocked.
 var unblockTimes = {};
+// The list of preloaded unsplash image links
+var imageList = [];
+
+function loadImageList() {
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (request.readyState == 4 && request.status == 200) {
+      imageList = JSON.parse(request.response);
+    }
+  };
+  request.open("GET", "https://unsplash.it/list", true);
+  request.send();
+}
 
 // Determine whether specific hostname is currently blocked. Domain is blocked
 // if it is in the blocklist and was not recently unblocked.
@@ -41,6 +54,8 @@ function parsedBlocklist(blocklist) {
     return str.trim();
   });
 }
+
+loadImageList();
 
 // Load the options from storage.
 chrome.storage.sync.get(options, function(items) {
