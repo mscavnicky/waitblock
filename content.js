@@ -8,10 +8,11 @@ function block() {
   request.send();
 
   if (request.status === 200) {
-    var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
-    var randomId = (99991 * Math.floor(dayNumber)) % 900;
-    var html = request.responseText.replace(/{{imageId}}/g, randomId);
-    document.all[0].innerHTML = html;
+    var message = { subject: "randomImageId" };
+    chrome.runtime.sendMessage(message, function(imageId) {
+      var html = request.responseText.replace(/{{imageId}}/g, imageId);
+      document.all[0].innerHTML = html;
+    });
   }
 
   // Start the countdown

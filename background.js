@@ -55,6 +55,21 @@ function parsedBlocklist(blocklist) {
   });
 }
 
+function randomImageId() {
+  var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
+
+  // This is a fallback in case image list was not loaded yet.
+  if (_.isEmpty(imageList)) {
+    return 0;
+  } else {
+    // To prevent change of image when imageList grows, we se the amount
+    // of maximum images on Unsplash to 950. There 974 of them at the moment
+    // of writing.
+    var randomIndex = (99991 * Math.floor(dayNumber)) % 950;
+    return imageList[randomIndex].id;
+  }
+}
+
 loadImageList();
 
 // Load the options from storage.
@@ -74,6 +89,7 @@ chrome.storage.onChanged.addListener(function(changes) {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   sendResponse({
     'blocked': blocked,
-    'unblock': unblock
+    'unblock': unblock,
+    'randomImageId': randomImageId
   }[message.subject](message));
 });
