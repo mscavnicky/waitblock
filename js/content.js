@@ -12,24 +12,24 @@ function block() {
     chrome.runtime.sendMessage(message, function(imageId) {
       var html = request.responseText.replace(/{{imageId}}/g, imageId);
       document.all[0].innerHTML = html;
+
+      // Start the countdown
+      chrome.storage.sync.get(defaultOptions, function(items) {
+        var waitTime = items.waitTime;
+        document.getElementById('timer').innerHTML = waitTime;
+
+        var timer = setInterval(function() {
+          if (waitTime <= 0) {
+            clearInterval(timer);
+            unblock();
+          } else {
+            document.getElementById('timer').innerHTML = waitTime;
+            waitTime -= 1;
+          }
+        }, 1000);
+      });
     });
   }
-
-  // Start the countdown
-  chrome.storage.sync.get(defaultOptions, function(items) {
-    var waitTime = items.waitTime;
-    document.getElementById('timer').innerHTML = waitTime;
-
-    var timer = setInterval(function() {
-      if (waitTime <= 0) {
-        clearInterval(timer);
-        unblock();
-      } else {
-        document.getElementById('timer').innerHTML = waitTime;
-        waitTime -= 1;
-      }
-    }, 1000);
-  });
 }
 
 function unblock() {
