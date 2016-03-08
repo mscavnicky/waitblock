@@ -18,8 +18,8 @@ function restoreOptions() {
     $('blocklist').value = items.blocklist;
 
     // Setting value does not trigger click oninput event.
-    $('waitTimeOutput').value = items.waitTime;
-    $('blockTimeOutput').value = items.blockTime;
+    $('waitTimeOutput').value = humanizeTime(items.waitTime);
+    $('blockTimeOutput').value = humanizeTime(items.blockTime * 60);
   });
 }
 
@@ -28,12 +28,25 @@ function $(id) {
   return document.getElementById(id);
 }
 
+function humanizeTime(seconds) {
+  var str = "";
+  if (seconds > 59) {
+    str += Math.floor(seconds / 60) + " minutes ";
+    seconds = seconds % 60;
+  }
+  // For 0 seconds we want to display '0 seconds'
+  if (str == "" || seconds > 0) {
+    str += seconds + " seconds";
+  }
+  return str;
+}
+
 $('waitTime').addEventListener('input', function() {
-  $('waitTimeOutput').value = $('waitTime').value;
+  $('waitTimeOutput').value = humanizeTime($('waitTime').value);
 });
 
 $('blockTime').addEventListener('input', function() {
-  $('blockTimeOutput').value = $('blockTime').value;
+  $('blockTimeOutput').value = humanizeTime($('blockTime').value * 60);
 });
 
 $('saveOptions').addEventListener('click', saveOptions);
