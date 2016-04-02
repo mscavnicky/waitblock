@@ -5,17 +5,6 @@ var unblockTimes = {};
 // The list of preloaded unsplash image links
 var imageList = [];
 
-function loadImageList() {
-  var request = new XMLHttpRequest();
-  request.onreadystatechange = function() {
-    if (request.readyState == 4 && request.status == 200) {
-      imageList = JSON.parse(request.response);
-    }
-  };
-  request.open("GET", "https://unsplash.it/list", true);
-  request.send();
-}
-
 // Determine whether specific hostname is currently blocked. Domain is blocked
 // if it is in the blocklist and was not recently unblocked.
 function blocked(message, sender) {
@@ -60,6 +49,17 @@ function blockedDomains(blocklist) {
   });
 }
 
+function loadImageList() {
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (request.readyState == 4 && request.status == 200) {
+      imageList = JSON.parse(request.response);
+    }
+  };
+  request.open("GET", "https://unsplash.it/list", true);
+  request.send();
+}
+
 function randomImageId() {
   var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
 
@@ -72,6 +72,20 @@ function randomImageId() {
     // of writing.
     var randomIndex = (99991 * Math.floor(dayNumber)) % 950;
     return imageList[randomIndex].id;
+  }
+}
+
+function blockingHtml() {
+  var request = new XMLHttpRequest();
+  request.open("GET", chrome.extension.getURL("index.html"), false);
+  request.send();
+
+  if (request.status === 200) {
+    var imageId = randomImageId();
+    var html = request.responseText.replace(/{{imageId}}/g, imageId);
+    return html;
+  } else {
+    return "There might be an issue with WaitBlock.";
   }
 }
 
@@ -95,6 +109,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   sendResponse({
     'blocked': blocked,
     'unblock': unblock,
-    'randomImageId': randomImageId
+    'blockingHtml': blockingHtml
   }[message.subject](message, sender));
 });

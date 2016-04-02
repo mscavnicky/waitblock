@@ -1,38 +1,32 @@
 function block() {
-  // Stop the original page from loading.
+  // Stop the original page from loading. This needs to happen as soon as
+  // possible to avoid flickering.
   window.stop();
 
-  // Synchronously replace document content with blocking template.
-  var request = new XMLHttpRequest();
-  request.open("GET", chrome.extension.getURL("index.html"), false);
-  request.send();
+  chrome.runtime.sendMessage({ subject: "blockingHtml" }, function(html) {
+    // Replace document content with blocking template.
+    document.all[0].innerHTML = html;
 
-  if (request.status === 200) {
-    var message = { subject: "randomImageId" };
-    chrome.runtime.sendMessage(message, function(imageId) {
-      var html = request.responseText.replace(/{{imageId}}/g, imageId);
-      document.all[0].innerHTML = html;
+    // Start the countdown
+    chrome.storage.sync.get(defaultOptions, function(items) {
+      var waitTime = items.waitTime;
+      document.getElementById('timer').innerHTML = waitTime;
 
-      // Start the countdown
-      chrome.storage.sync.get(defaultOptions, function(items) {
-        var waitTime = items.waitTime;
-        document.getElementById('timer').innerHTML = waitTime;
+      var timer = setInterval(function() {
+        if (waitTime <= 0) {
+          clearInterval(timer);
 
-        var timer = setInterval(function() {
-          if (waitTime <= 0) {
-            clearInterval(timer);
-
-            chrome.runtime.sendMessage({ subject: "unblock" }, function(response) {
-              window.location.reload();
-            });
-          } else {
-            document.getElementById('timer').innerHTML = waitTime;
-            waitTime -= 1;
-          }
-        }, 1000);
-      });
+          // Notify background page to unblock domain
+          chrome.runtime.sendMessage({ subject: "unblock" }, function(response) {
+            window.location.reload();
+          });
+        } else {
+          document.getElementById('timer').innerHTML = waitTime;
+          waitTime -= 1;
+        }
+      }, 1000);
     });
-  }
+  });
 }
 
 // Everytime a new page loads, extension checks whether domain should be blocked
