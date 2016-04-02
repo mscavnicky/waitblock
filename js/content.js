@@ -21,7 +21,10 @@ function block() {
         var timer = setInterval(function() {
           if (waitTime <= 0) {
             clearInterval(timer);
-            unblock();
+
+            chrome.runtime.sendMessage({ subject: "unblock" }, function(response) {
+              window.location.reload();
+            });
           } else {
             document.getElementById('timer').innerHTML = waitTime;
             waitTime -= 1;
@@ -32,22 +35,13 @@ function block() {
   }
 }
 
-function unblock() {
-  chrome.runtime.sendMessage({
-    subject: "unblock",
-    hostname: window.location.hostname
-  });
-
-  window.location.reload();
-}
-
-
-var message = {
-  subject: "blocked",
-  hostname: window.location.hostname
-};
-
-chrome.runtime.sendMessage(message, function(response) {
-  if (response === true)
+// Everytime a new page loads, extension checks whether domain should be blocked
+// with the background page. If that is true, the page loading is stopped,
+// whole HTML page is swapped with blocking page, which then waits for the
+// specified period of time. Afterwards the original page reloaded, and background
+// page is instructed to not block the page for a while.
+chrome.runtime.sendMessage({ subject: "blocked" }, function(response) {
+  if (response === true) {
     block();
+  }
 });

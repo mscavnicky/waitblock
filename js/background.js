@@ -18,13 +18,12 @@ function loadImageList() {
 
 // Determine whether specific hostname is currently blocked. Domain is blocked
 // if it is in the blocklist and was not recently unblocked.
-function blocked(message) {
-  // Handle special case
+function blocked(message, sender) {
   if (options.waitTime === '0')
     return false;
 
-  var domain =  _.find(parsedBlocklist(), function (domain) {
-    return message.hostname.endsWith(domain);
+  var domain =  _.find(blockedDomains(), function (domain) {
+    return urlToHostname(sender.tab.url).endsWith(domain);
   });
 
   if (_.isUndefined(domain))
@@ -38,15 +37,21 @@ function blocked(message) {
   return Date.now() - unblockTime > options.blockTime * 60 * 1000;
 }
 
-function unblock(message) {
-  var domain =  _.find(parsedBlocklist(), function (domain) {
-    return message.hostname.endsWith(domain);
+function unblock(message, sender) {
+  var domain =  _.find(blockedDomains(), function (domain) {
+    return urlToHostname(sender.tab.url).endsWith(domain);
   });
 
   unblockTimes[domain] = Date.now();
 }
 
-function parsedBlocklist(blocklist) {
+function urlToHostname(url) {
+  var parser = document.createElement('a');
+  parser.href = url;
+  return parser.hostname;
+}
+
+function blockedDomains(blocklist) {
   if (options.blocklist.trim().length === 0)
     return [];
 
@@ -91,5 +96,5 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     'blocked': blocked,
     'unblock': unblock,
     'randomImageId': randomImageId
-  }[message.subject](message));
+  }[message.subject](message, sender));
 });
