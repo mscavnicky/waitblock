@@ -5,23 +5,19 @@
       @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,700,100);
 
       @media {
-        html {
+        main {
           background: url(https://unsplash.it/1280/800?image={{imageId}}) no-repeat center center fixed;
         }
       }
       @media screen and (min-width: 1440px) {
-        html {
+        main {
           background: url(https://unsplash.it/1920/1080?image={{imageId}}) no-repeat center center fixed;
         }
       }
       @media screen and (min-resolution: 192dpi) {
-        html {
+        main {
           background: url(https://unsplash.it/1920/1080?image={{imageId}}) no-repeat center center fixed;
         }
-      }
-
-      html {
-        background-size: cover;
       }
 
       body {
@@ -32,12 +28,32 @@
         font-weight: 100;
       }
 
+      /* Background image transitions do not work with body, hence main is used. */
+      main {
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 100%;
+
+        background-size: cover;
+        background-color: white;
+
+        animation: fadein 0.5s;
+      }
+
       footer {
         background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.33) 38%, rgba(0,0,0,0.66) 100%);
         position: absolute;
         bottom: 0;
         width: 100%;
         height: 80px;
+
+        animation: fadein 0.5s;
+      }
+
+      @keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
       }
 
       .cta {
@@ -50,6 +66,8 @@
         padding: 20px;
       }
     </style>
+    <main>
+    </main>
     <footer>
       <div class="cta">
         Please wait <span id="timer"></span> seconds to continue.
