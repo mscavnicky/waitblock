@@ -23,7 +23,14 @@ function blocked(message, sender) {
     return true;
 
   // Site is blocked again when the it was unblocked for too long.
-  return Date.now() - unblockTime > options.blockTime * 60 * 1000;
+  var blocked = Date.now() - unblockTime > options.blockTime * 60 * 1000
+
+  // Given that the website is blocked, we may need to show the remaining time.
+  if (blocked === false) {
+    updateRemainingTime(sender);
+  }
+
+  return blocked;
 }
 
 function unblock(message, sender) {
@@ -32,6 +39,29 @@ function unblock(message, sender) {
   });
 
   unblockTimes[domain] = Date.now();
+
+  updateRemainingTime(sender);
+}
+
+function updateRemainingTime(sender) {
+  var domain =  _.find(blockedDomains(), function (domain) {
+    return urlToHostname(sender.tab.url).endsWith(domain);
+  });
+
+  var timer = setInterval(function() {
+    var remainingMillis = (options.blockTime * 1000 * 60) - (Date.now() - unblockTimes[domain]);
+    var remainingSeconds = Math.floor(remainingMillis / 1000);
+    var remainingMinutes = Math.floor(remainingSeconds / 60);
+
+    if (remainingMinutes < 0) {
+      clearInterval(timer);
+      chrome.tabs.reload(sender.tab.id);
+      return;
+    }
+
+    var text = remainingSeconds > 59 ? remainingMinutes + "m" : remainingSeconds + "s";
+    chrome.browserAction.setBadgeText({ text: text, tabId: sender.tab.id });
+  }, 1000);
 }
 
 function urlToHostname(url) {

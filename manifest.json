@@ -29,6 +29,7 @@
       "run_at": "document_start"
     }
   ],
+  "browser_action": {},
   "options_ui": {
     "page": "options.html",
     "chrome_style": true
