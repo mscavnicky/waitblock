@@ -44,7 +44,8 @@ function blockedDomains(blocklist) {
   if (options.blocklist.trim().length === 0)
     return [];
 
-  return _.map(options.blocklist.split(','), function(str) {
+  // Some users separate domains by newline, even though comma is specified.
+  return _.map(options.blocklist.split(/,|\n/), function(str) {
     return str.trim();
   });
 }
