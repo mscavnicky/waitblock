@@ -2,8 +2,11 @@
 var options = defaultOptions;
 // Hash of times in milliseconds when particular domain was blocked.
 var unblockTimes = {};
-// The list of preloaded unsplash image links
-var imageList = [];
+
+// Default URL for the background image. Should always load.
+DEFAULT_IMAGE_URL = 'https://source.unsplash.com/featured/1280x800/daily';
+// Cached URL or the last displayed image.
+var imageUrl = DEFAULT_IMAGE_URL;
 
 // Determine whether specific hostname is currently blocked. Domain is blocked
 // if it is in the blocklist and was not recently unblocked.
@@ -50,47 +53,36 @@ function blockedDomains(blocklist) {
   });
 }
 
-function loadImageList() {
-  var request = new XMLHttpRequest();
-  request.onreadystatechange = function() {
-    if (request.readyState == 4 && request.status == 200) {
-      imageList = JSON.parse(request.response);
-    }
-  };
-  request.open("GET", "https://unsplash.it/list", true);
-  request.send();
-}
-
-function randomImageId() {
-  var dayNumber = new Date().getTime() / (1000 * 60 * 60 * 24);
-
-  // This is a fallback in case image list was not loaded yet.
-  if (_.isEmpty(imageList)) {
-    return 0;
-  } else {
-    // To prevent change of image when imageList grows, we se the amount
-    // of maximum images on Unsplash to 950. There 974 of them at the moment
-    // of writing.
-    var randomIndex = (99991 * Math.floor(dayNumber)) % 950;
-    return imageList[randomIndex].id;
-  }
-}
-
 function blockingHtml() {
+  refreshImageUrl();
+
   var request = new XMLHttpRequest();
-  request.open("GET", chrome.extension.getURL("index.html"), false);
+  request.open('GET', chrome.extension.getURL("index.html"), false);
   request.send();
 
-  if (request.status === 200) {
-    var imageId = randomImageId();
-    var html = request.responseText.replace(/{{imageId}}/g, imageId);
-    return html;
-  } else {
+  if (request.status !== 200) {
     return "There might be an issue with WaitBlock.";
   }
+
+  return request.responseText.replace(/{{imageUrl}}/g, imageUrl);
 }
 
-loadImageList();
+// The default image URL we are currently using, redirects to the actual URL
+// of the actual image. This is slow and destroys user experience. Therefore we
+// do cache the URL of the actual image in a global variable.
+function refreshImageUrl() {
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (request.status === 200) {
+      imageUrl = request.responseURL;
+    }
+  };
+  request.open('GET', DEFAULT_IMAGE_URL)
+  request.send();
+}
+
+// Fetch image URL on startup to speed up the first image load.
+refreshImageUrl();
 
 // Load the options from storage.
 chrome.storage.sync.get(options, function(items) {
