@@ -1,11 +1,11 @@
 // Local copy of extension options
 var options = defaultOptions;
-// Hash of times in milliseconds when particular domain was blocked.
+// Hash of times in milliseconds when a particular tab was blocked.
 var unblockTimes = {};
 // The list of preloaded unsplash image links
 var imageList = [];
 
-// Determine whether specific hostname is currently blocked. Domain is blocked
+// Determine whether specific tab is currently blocked. Tab is blocked
 // if it is in the blocklist and was not recently unblocked.
 function blocked(message, sender) {
   if (options.waitTime === '0')
@@ -18,7 +18,7 @@ function blocked(message, sender) {
   if (_.isUndefined(domain))
     return false;
 
-  var unblockTime = unblockTimes[domain];
+  var unblockTime = unblockTimes[sender.tab.id];
   if (_.isUndefined(unblockTime))
     return true;
 
@@ -31,7 +31,7 @@ function unblock(message, sender) {
     return urlToHostname(sender.tab.url).endsWith(domain);
   });
 
-  unblockTimes[domain] = Date.now();
+  unblockTimes[sender.tab.id] = Date.now();
 }
 
 function urlToHostname(url) {

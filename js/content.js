@@ -33,7 +33,7 @@ function block() {
 // with the background page. If that is true, the page loading is stopped,
 // whole HTML page is swapped with blocking page, which then waits for the
 // specified period of time. Afterwards the original page reloaded, and background
-// page is instructed to not block the page for a while.
+// page is instructed to not block the tab for a while.
 chrome.runtime.sendMessage({ subject: "blocked" }, function(response) {
   if (response === true) {
     block();
