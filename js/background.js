@@ -113,3 +113,16 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     'blockingHtml': blockingHtml
   }[message.subject](message, sender));
 });
+
+chrome.webNavigation.onBeforeNavigate.addListener(function(data) {
+  console.log(sender);
+  chrome.tabs.get(data.tabId, function(tab) {
+    var domain =  _.find(blockedDomains(), function (domain) {
+      return urlToHostname(tab.url).endsWith(domain);
+    });
+
+    if (_.isUndefined(domain))
+      return;
+
+  })
+});

@@ -6,7 +6,8 @@
   "minimum_chrome_version": "40",
 
   "permissions": [
-    "storage"
+    "storage",
+    "webNavigation"
   ],
   "icons": { "128": "img/icon.png" },
   "web_accessible_resources": [
