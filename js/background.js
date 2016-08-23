@@ -4,7 +4,7 @@ var options = defaultOptions;
 var unblockTimes = {};
 
 // Default URL for the background image. Should always load.
-DEFAULT_IMAGE_URL = 'https://source.unsplash.com/featured/1280x800/daily';
+DEFAULT_IMAGE_URL = 'https://source.unsplash.com/collection/323879/1440x900/daily';
 // Cached URL or the last displayed image.
 var imageUrl = DEFAULT_IMAGE_URL;
 
