@@ -5,5 +5,7 @@ var defaultOptions = {
   // Time to wait till the page is blocked after unblocking. In minutes.
   blockTime: 5,
   // The list of domains to block. Covers subdomains as well.
-  blocklist: 'facebook.com'
+  blocklist: 'facebook.com',
+  // The list of subdomains to allow.
+  whitelist: 'l.facebook.com'
 };

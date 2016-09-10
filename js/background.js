@@ -14,10 +14,7 @@ function blocked(message, sender) {
   if (options.waitTime === '0')
     return false;
 
-  var domain =  _.find(blockedDomains(), function (domain) {
-    return urlToHostname(sender.tab.url).endsWith(domain);
-  });
-
+  var domain = blockedDomain(sender.tab.url);
   if (_.isUndefined(domain))
     return false;
 
@@ -30,11 +27,20 @@ function blocked(message, sender) {
 }
 
 function unblock(message, sender) {
-  var domain =  _.find(blockedDomains(), function (domain) {
-    return urlToHostname(sender.tab.url).endsWith(domain);
-  });
-
+  var domain = blockedDomain(sender.tab.url);
   unblockTimes[domain] = Date.now();
+}
+
+function blockedDomain(url) {
+  var hostname = urlToHostname(url);
+  var blocklist = parseDomains(options.blocklist);
+  var whitelist = parseDomains(options.whitelist);
+
+  return _.find(blocklist, function (domain) {
+    return hostname.endsWith(domain) && !_.any(whitelist, function(subdomain) {
+      return hostname.endsWith(subdomain);
+    });
+  });
 }
 
 function urlToHostname(url) {
@@ -43,12 +49,12 @@ function urlToHostname(url) {
   return parser.hostname;
 }
 
-function blockedDomains(blocklist) {
-  if (options.blocklist.trim().length === 0)
+function parseDomains(blocklist) {
+  if (blocklist.trim().length === 0)
     return [];
 
   // Some users separate domains by newline, even though comma is specified.
-  return _.map(options.blocklist.split(/,|\n/), function(str) {
+  return _.map(blocklist.split(/,|\n/), function(str) {
     return str.trim();
   });
 }
