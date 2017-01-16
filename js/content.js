@@ -9,11 +9,13 @@ function block() {
 
     // Start the countdown
     chrome.storage.sync.get(defaultOptions, function(items) {
-      var waitTime = items.waitTime;
-      document.getElementById('timer').innerHTML = waitTime;
+      var waitTimeInMillis = items.waitTime * 1000;
+      var lastTickInMillis = Date.now();
 
       var timer = setInterval(function() {
-        if (waitTime <= 0) {
+        // The page should be rendered at zero. However, it takes time for the
+        // page to unblock, so we make the last second shorter by extra 250ms.
+        if (waitTimeInMillis <= 250) {
           clearInterval(timer);
 
           // Notify background page to unblock domain
@@ -21,10 +23,13 @@ function block() {
             window.location.reload();
           });
         } else {
-          document.getElementById('timer').innerHTML = waitTime;
-          waitTime -= 1;
+          document.getElementById('timer').innerHTML = Math.ceil(waitTimeInMillis / 1000);
+
+          var nowInMillis = Date.now();
+          waitTimeInMillis -= nowInMillis - lastTickInMillis;
+          lastTickInMillis = nowInMillis;
         }
-      }, 1000);
+      }, 50);
     });
   });
 }
