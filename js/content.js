@@ -23,11 +23,18 @@ function block() {
             window.location.reload();
           });
         } else {
-          document.getElementById('timer').innerHTML = Math.ceil(waitTimeInMillis / 1000);
+          chrome.runtime.sendMessage({ subject: "isActivated" }, function(response) {
+            var nowInMillis = Date.now();
 
-          var nowInMillis = Date.now();
-          waitTimeInMillis -= nowInMillis - lastTickInMillis;
-          lastTickInMillis = nowInMillis;
+            if (response === false) {
+              lastTickInMillis = nowInMillis;
+            } else {
+              document.getElementById('timer').innerHTML = Math.ceil(waitTimeInMillis / 1000);
+
+              waitTimeInMillis -= nowInMillis - lastTickInMillis;
+              lastTickInMillis = nowInMillis;
+            }
+          });
         }
       }, 50);
     });

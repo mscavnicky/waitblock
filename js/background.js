@@ -104,10 +104,49 @@ chrome.storage.onChanged.addListener(function(changes) {
   });
 });
 
+// Currently active tab ID where the counter is being decreased.
+var activeTabId = null;
+var activeWindowId = null;
+
+function isActivated(message, sender) {
+  if (activeWindowId === null || activeTabId === null)
+    return false;
+  return sender.tab.windowId === activeWindowId && sender.tab.id === activeTabId;
+}
+
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  activeTabId = activeInfo.tabId;
+});
+
+chrome.windows.onFocusChanged.addListener(function(windowId) {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    activeTabId = null;
+    activeWindowId = null;
+  } else {
+    activeWindowId = windowId;
+    // Changing window, does not fire chrome.tabs.onActivated, so one needs to
+    // fetch the active tab ID manually.
+    chrome.tabs.query({ currentWindow: true, active: true }, function(tabs) {
+      activeTabId = tabs[0].id;
+    });
+  }
+});
+
+// Initialize active window on extension startup.
+chrome.windows.getCurrent(function(window) {
+  activeWindowId = window.id;
+});
+
+// Initialize active tab on extension startup.
+chrome.tabs.query({ currentWindow: true, active: true }, function(tabs) {
+  activeTabId = tabs[0].id;
+});
+
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   sendResponse({
     'blocked': blocked,
     'unblock': unblock,
-    'blockingHtml': blockingHtml
+    'blockingHtml': blockingHtml,
+    'isActivated': isActivated
   }[message.subject](message, sender));
 });
