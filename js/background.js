@@ -76,7 +76,7 @@ function blockingHtml() {
 
 function hasCustomBackground() {
   var userBackgrounds = window.options.background.split(',');
-  return userBackgrounds.length > 0;
+  return userBackgrounds.length > 0 && userBackgrounds[0] != "";
 }
 
 function randomUserBackground() {
