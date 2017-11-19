@@ -115,6 +115,7 @@ function isActivated(message, sender) {
 }
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
+  activeWindowId = activeInfo.windowId;
   activeTabId = activeInfo.tabId;
 });
 
@@ -122,6 +123,15 @@ chrome.windows.onFocusChanged.addListener(function(windowId) {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
     activeTabId = null;
     activeWindowId = null;
+    // Double-check that the window went out-of-focus. On Windows, this event
+    // gets fired with -1 after opening a new URL, when window just gained focus.
+    chrome.windows.getCurrent(function(window) {
+      console.log(window);
+      if (window.focused === false) {
+        activeTabId = null;
+        activeWindowId = null;     
+      }
+    });
   } else {
     activeWindowId = windowId;
     // Changing window, does not fire chrome.tabs.onActivated, so one needs to
