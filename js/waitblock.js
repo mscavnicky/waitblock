@@ -7,5 +7,7 @@ var defaultOptions = {
   // The list of domains to block. Covers subdomains as well.
   blocklist: 'facebook.com',
   // The list of subdomains to allow.
-  whitelist: 'l.facebook.com'
+  whitelist: 'l.facebook.com',
+  // The list of background URLs to randomize from.
+  background: ''
 };

@@ -5,6 +5,7 @@ var unblockTimes = {};
 
 // Default URL for the background image. Should always load.
 DEFAULT_IMAGE_URL = 'https://source.unsplash.com/collection/323879/1440x900/daily';
+
 // Cached URL or the last displayed image.
 var imageUrl = DEFAULT_IMAGE_URL;
 
@@ -73,18 +74,33 @@ function blockingHtml() {
   return request.responseText.replace(/{{imageUrl}}/g, imageUrl);
 }
 
+function hasCustomBackground() {
+  var userBackgrounds = window.options.background.split(',');
+  return userBackgrounds.length > 0 && userBackgrounds[0] != "";
+}
+
+function randomUserBackground() {
+  var userBackgrounds = window.options.background.split(',');
+  var randomUserBackground = userBackgrounds[Math.floor(Math.random()*userBackgrounds.length)]
+  return randomUserBackground;
+}
+
 // The default image URL we are currently using, redirects to the actual URL
 // of the actual image. This is slow and destroys user experience. Therefore we
 // do cache the URL of the actual image in a global variable.
 function refreshImageUrl() {
-  var request = new XMLHttpRequest();
-  request.onreadystatechange = function() {
-    if (request.status === 200) {
-      imageUrl = request.responseURL;
-    }
-  };
-  request.open('GET', DEFAULT_IMAGE_URL)
-  request.send();
+  if (hasCustomBackground()) {
+    imageUrl = randomUserBackground();
+  } else {
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+        imageUrl = request.responseURL;
+      }
+    };
+    request.open('GET', imageUrl)
+    request.send();
+  }
 }
 
 // Fetch image URL on startup to speed up the first image load.

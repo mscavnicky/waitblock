@@ -3,7 +3,8 @@ function saveOptions() {
     waitTime: $('waitTime').value,
     blockTime: $('blockTime').value,
     blocklist: $('blocklist').value,
-    whitelist: $('whitelist').value
+    whitelist: $('whitelist').value,
+    background: $('background').value
   };
 
   chrome.storage.sync.set(options, function() {
@@ -18,6 +19,7 @@ function restoreOptions() {
     $('blockTime').value = items.blockTime;
     $('blocklist').value = items.blocklist;
     $('whitelist').value = items.whitelist;
+    $('background').value = items.background;
 
     // Setting value does not trigger click oninput event.
     $('waitTimeOutput').value = humanizeTime(items.waitTime);
